@@ -237,6 +237,14 @@ $("modalBackdrop").addEventListener("click",e=>{if(e.target===$("modalBackdrop")
 
 $("downloadDocx").onclick=async()=>{
   if(!currentRecord)return;
+  if(!window.docx){
+    alert("Не удалось загрузить модуль DOCX. Обновите страницу и попробуйте ещё раз.");
+    return;
+  }
+  if(typeof window.saveAs !== "function"){
+    alert("Не удалось загрузить модуль скачивания. Обновите страницу и попробуйте ещё раз.");
+    return;
+  }
   const r=currentRecord,d=window.docx;
   const rows=[
     new d.TableRow({children:[
