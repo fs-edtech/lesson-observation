@@ -228,7 +228,7 @@ function openRecord(id){
       <div class="meta"><small>Версия карты</small><b>${esc(r.card_version==="pilot"?"Единая карта — пилот":r.card_version)}</b></div>
     </div>
     <div class="table-wrap" style="border-radius:14px"><table class="sheet-table"><thead><tr><th>№</th><th>Критерий / вопрос</th><th>Балл</th><th>Комментарий</th></tr></thead><tbody>${criterionRows}</tbody></table></div>
-    <div class="summary"><div><small>Итог</small><strong>${r.total_score}/12</strong></div><span class="tag">${level(Number(r.total_score)||0)} уровень</span></div>
+    <div class="summary"><div><small>Итог </small><strong>${r.total_score}/12</strong></div><span class="tag">${level(Number(r.total_score)||0)} уровень</span></div>
     <div style="margin-top:16px"><label>Итоговый комментарий / рекомендации</label><div class="meta">${esc(r.general_comment||"Комментарий не оставлен")}</div></div>`;
   $("modalBackdrop").classList.remove("hidden");
 }
