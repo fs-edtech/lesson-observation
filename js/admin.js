@@ -237,47 +237,152 @@ $("modalBackdrop").addEventListener("click",e=>{if(e.target===$("modalBackdrop")
 
 $("downloadDocx").onclick=async()=>{
   if(!currentRecord)return;
-  const r=currentRecord,d=window.docx;
-  const rows=[
-    new d.TableRow({children:[
-      new d.TableCell({children:[new d.Paragraph({children:[new d.TextRun({text:"№",bold:true})]})]}),
-      new d.TableCell({children:[new d.Paragraph({children:[new d.TextRun({text:"Критерий / вопрос",bold:true})]})]}),
-      new d.TableCell({children:[new d.Paragraph({children:[new d.TextRun({text:"Балл",bold:true})]})]}),
-      new d.TableCell({children:[new d.Paragraph({children:[new d.TextRun({text:"Комментарий",bold:true})]})]})
-    ]}),
-    ...CRITERIA.map((c,i)=>new d.TableRow({children:[
-      new d.TableCell({children:[new d.Paragraph(String(i+1))]}),
-      new d.TableCell({children:[new d.Paragraph(c)]}),
-      new d.TableCell({children:[new d.Paragraph(String(r[`criterion_${i+1}_score`] ?? "—"))]}),
-      new d.TableCell({children:[new d.Paragraph(r[`criterion_${i+1}_note`] || "Комментарий не оставлен")]})
-    ]}))
-  ];
-  const doc=new d.Document({sections:[{properties:{},children:[
-    new d.Paragraph({text:"Future School",heading:d.HeadingLevel.TITLE,alignment:d.AlignmentType.CENTER}),
-    new d.Paragraph({text:"Лист наблюдения урока",heading:d.HeadingLevel.HEADING_1,alignment:d.AlignmentType.CENTER}),
-    new d.Paragraph(""),
-    new d.Paragraph({children:[new d.TextRun({text:"Дата и время: ",bold:true}),new d.TextRun(fmt(r.created_at))]}),
-    new d.Paragraph({children:[new d.TextRun({text:"Кабинет: ",bold:true}),new d.TextRun(r.room||"—")]}),
-    new d.Paragraph({children:[new d.TextRun({text:"Формат: ",bold:true}),new d.TextRun(r.observation_type)]}),
-    new d.Paragraph({children:[new d.TextRun({text:"Наблюдатель: ",bold:true}),new d.TextRun(fullName(r,"observer"))]}),
-    new d.Paragraph({children:[new d.TextRun({text:"Наблюдаемый педагог: ",bold:true}),new d.TextRun(fullName(r,"teacher"))]}),
-    new d.Paragraph(""),
-    new d.Table({rows,width:{size:100,type:d.WidthType.PERCENTAGE}}),
-    new d.Paragraph(""),
-    new d.Paragraph({children:[new d.TextRun({text:"Итог: ",bold:true}),new d.TextRun(`${r.total_score}/12 — ${level(Number(r.total_score)||0)} уровень`)]}),
-    new d.Paragraph({children:[new d.TextRun({text:"Итоговый комментарий / рекомендации: ",bold:true}),new d.TextRun(r.general_comment||"Комментарий не оставлен")]})
-  ]}]});
-  const blob=await d.Packer.toBlob(doc);
-  const date=new Date(r.created_at).toISOString().slice(0,10);
-  const teacher=`${r.teacher_last_name} ${r.teacher_first_name}`.trim().replace(/[\\/:*?"<>|]/g,"");
-  const observer=`${r.observer_last_name} ${r.observer_first_name}`.trim().replace(/[\\/:*?"<>|]/g,"");
-  const filename = `${date} — ${r.observation_type} — ${teacher} — ${observer}.docx`;
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = filename;
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-  setTimeout(() => URL.revokeObjectURL(url), 1500);
+  if(typeof JSZip === "undefined"){
+    alert("Не удалось загрузить модуль создания DOCX. Обновите страницу и попробуйте ещё раз.");
+    return;
+  }
+
+  const r=currentRecord;
+
+  const xmlEscape = (value) => String(value ?? "")
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&apos;");
+
+  const p = (text, bold=false, center=false, size=22) =>
+    `<w:p>${center?'<w:pPr><w:jc w:val="center"/></w:pPr>':''}<w:r>${bold?'<w:rPr><w:b/><w:bCs/><w:sz w:val="'+size+'"/><w:szCs w:val="'+size+'"/></w:rPr>':'<w:rPr><w:sz w:val="'+size+'"/><w:szCs w:val="'+size+'"/></w:rPr>'}<w:t xml:space="preserve">${xmlEscape(text)}</w:t></w:r></w:p>`;
+
+  const cell = (text, bold=false, width=2000) =>
+    `<w:tc><w:tcPr><w:tcW w:w="${width}" w:type="dxa"/><w:tcMar><w:top w:w="80" w:type="dxa"/><w:left w:w="90" w:type="dxa"/><w:bottom w:w="80" w:type="dxa"/><w:right w:w="90" w:type="dxa"/></w:tcMar></w:tcPr>${p(text,bold,false,19)}</w:tc>`;
+
+  const row = (cells) => `<w:tr>${cells.join("")}</w:tr>`;
+
+  const criterionRows = CRITERIA.map((c,i)=>row([
+    cell(String(i+1), false, 500),
+    cell(c, false, 4200),
+    cell(String(r[`criterion_${i+1}_score`] ?? "—"), true, 700),
+    cell(r[`criterion_${i+1}_note`] || "Комментарий не оставлен", false, 3800)
+  ])).join("");
+
+  const table = `
+    <w:tbl>
+      <w:tblPr>
+        <w:tblW w:w="0" w:type="auto"/>
+        <w:tblBorders>
+          <w:top w:val="single" w:sz="6" w:space="0" w:color="B8C0CC"/>
+          <w:left w:val="single" w:sz="6" w:space="0" w:color="B8C0CC"/>
+          <w:bottom w:val="single" w:sz="6" w:space="0" w:color="B8C0CC"/>
+          <w:right w:val="single" w:sz="6" w:space="0" w:color="B8C0CC"/>
+          <w:insideH w:val="single" w:sz="4" w:space="0" w:color="D9DEE7"/>
+          <w:insideV w:val="single" w:sz="4" w:space="0" w:color="D9DEE7"/>
+        </w:tblBorders>
+      </w:tblPr>
+      ${row([
+        cell("№",true,500),
+        cell("Критерий / вопрос",true,4200),
+        cell("Балл",true,700),
+        cell("Комментарий",true,3800)
+      ])}
+      ${criterionRows}
+    </w:tbl>`;
+
+  const body = [
+    p("Future School", true, true, 34),
+    p("Лист наблюдения урока", true, true, 30),
+    p("", false),
+    p("Дата и время: " + fmt(r.created_at), true),
+    p("Кабинет: " + (r.room || "—")),
+    p("Формат: " + r.observation_type),
+    p("Наблюдатель: " + fullName(r,"observer")),
+    p("Наблюдаемый педагог: " + fullName(r,"teacher")),
+    p("", false),
+    table,
+    p("", false),
+    p(`Итог: ${r.total_score}/12 — ${level(Number(r.total_score)||0)} уровень`, true),
+    p("Итоговый комментарий / рекомендации: " + (r.general_comment || "Комментарий не оставлен")),
+    `<w:sectPr>
+       <w:pgSz w:w="11906" w:h="16838"/>
+       <w:pgMar w:top="1134" w:right="1134" w:bottom="1134" w:left="1134" w:header="708" w:footer="708" w:gutter="0"/>
+     </w:sectPr>`
+  ].join("");
+
+  const documentXml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+  <w:body>${body}</w:body>
+</w:document>`;
+
+  const contentTypes = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">
+  <Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>
+  <Default Extension="xml" ContentType="application/xml"/>
+  <Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/>
+  <Override PartName="/docProps/core.xml" ContentType="application/vnd.openxmlformats-package.core-properties+xml"/>
+  <Override PartName="/docProps/app.xml" ContentType="application/vnd.openxmlformats-officedocument.extended-properties+xml"/>
+</Types>`;
+
+  const rootRels = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
+  <Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/>
+  <Relationship Id="rId2" Type="http://schemas.openxmlformats.org/package/2006/relationships/metadata/core-properties" Target="docProps/core.xml"/>
+  <Relationship Id="rId3" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/extended-properties" Target="docProps/app.xml"/>
+</Relationships>`;
+
+  const docRels = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"></Relationships>`;
+
+  const now = new Date().toISOString();
+  const coreXml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<cp:coreProperties xmlns:cp="http://schemas.openxmlformats.org/package/2006/metadata/core-properties"
+ xmlns:dc="http://purl.org/dc/elements/1.1/"
+ xmlns:dcterms="http://purl.org/dc/terms/"
+ xmlns:dcmitype="http://purl.org/dc/dcmitype/"
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <dc:title>Лист наблюдения урока</dc:title>
+  <dc:creator>Future School</dc:creator>
+  <cp:lastModifiedBy>Future School</cp:lastModifiedBy>
+  <dcterms:created xsi:type="dcterms:W3CDTF">${now}</dcterms:created>
+  <dcterms:modified xsi:type="dcterms:W3CDTF">${now}</dcterms:modified>
+</cp:coreProperties>`;
+
+  const appXml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Properties xmlns="http://schemas.openxmlformats.org/officeDocument/2006/extended-properties"
+ xmlns:vt="http://schemas.openxmlformats.org/officeDocument/2006/docPropsVTypes">
+  <Application>Future School Observation</Application>
+</Properties>`;
+
+  try {
+    const zip = new JSZip();
+    zip.file("[Content_Types].xml", contentTypes);
+    zip.folder("_rels").file(".rels", rootRels);
+    zip.folder("word").file("document.xml", documentXml);
+    zip.folder("word").folder("_rels").file("document.xml.rels", docRels);
+    zip.folder("docProps").file("core.xml", coreXml);
+    zip.folder("docProps").file("app.xml", appXml);
+
+    const blob = await zip.generateAsync({
+      type:"blob",
+      mimeType:"application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      compression:"DEFLATE"
+    });
+
+    const date=new Date(r.created_at).toISOString().slice(0,10);
+    const safe = s => String(s).replace(/[\\/:*?"<>|]/g,"").trim();
+    const teacher=safe(`${r.teacher_last_name} ${r.teacher_first_name}`);
+    const observer=safe(`${r.observer_last_name} ${r.observer_first_name}`);
+    const filename=`${date} — ${safe(r.observation_type)} — ${teacher} — ${observer}.docx`;
+
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement("a");
+    a.href=url;
+    a.download=filename;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url),2000);
+  } catch(err) {
+    console.error(err);
+    alert("Не удалось сформировать DOCX: " + (err?.message || err));
+  }
 };
