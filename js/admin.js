@@ -1,3 +1,4 @@
+
 const sb=window.supabase.createClient(APP_CONFIG.SUPABASE_URL,APP_CONFIG.SUPABASE_PUBLISHABLE_KEY);
 const C=["Функциональная грамотность","Уровневая дифференциация","Адресное вовлечение (управление вниманием)","Критическое мышление","Таксономия Блума","ТРИЗ и креативное мышление","Логическое мышление","Рефлексия (осознанность обучения)","Интеграция ценностей воспитания"];
 let allRows=[],currentRecord=null,analyticsCampus="all";
