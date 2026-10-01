@@ -14,4 +14,25 @@
 <section id="step7" class="hidden"><h3 class="section-title">Критериальная карта</h3><p class="section-sub">Оцените каждый критерий от 0 до 10 и добавьте комментарий при необходимости.</p><div id="criteria" class="criteria"></div><div class="summary"><div><small>Итоговый балл</small><strong id="total">0 / 90</strong></div><div id="level" class="tag">Не заполнено</div></div><div style="margin-top:16px"><label>Итоговый комментарий / рекомендации</label><textarea id="general" placeholder="Ключевые наблюдения, сильные стороны, точки роста, договорённости..."></textarea></div><div id="submitNotice"></div><div class="actions"><button class="btn secondary back" data-go="6">← Назад</button><button id="publish" class="btn primary" disabled>Опубликовать лист</button></div></section>
 <section id="step8" class="hidden"><div class="success"><div class="check">✓</div><h3 class="section-title">Лист опубликован</h3><p class="section-sub">Наблюдение сохранено и доступно администрации.</p><button id="restart" class="btn primary">Заполнить ещё одну карту</button></div></section>
 </div></section></div>
+
+<div id="rubricBackdrop" class="modal-backdrop hidden">
+  <div class="modal rubric-modal">
+    <div class="modal-head">
+      <div><b>Как поставить балл</b><div id="rubricSubtitle" style="font-size:12px;color:#6c7688;margin-top:3px"></div></div>
+      <button id="closeRubric" class="btn secondary">Закрыть</button>
+    </div>
+    <div class="modal-body">
+      <div id="rubricGrid" class="rubric-grid"></div>
+      <div class="rubric-rules">
+        <b>Краткая памятка наблюдателя</b>
+        <ul>
+          <li>Смотрите не только на действия учителя, но и на реакцию учеников.</li>
+          <li>Фиксируйте факты, а не эмоции.</li>
+          <li>«Не предусмотрено» используйте, если критерий объективно не входит в структуру данного урока. Он не снижает итоговый результат.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="js/config.js"></script><script src="js/observer.js"></script></body></html>
