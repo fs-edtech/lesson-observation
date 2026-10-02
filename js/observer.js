@@ -42,10 +42,10 @@ function escapeHtml(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;",
 function escAttr(s){return escapeHtml(s)}
 
 function go(n){
-  for(let i=1;i<=10;i++)$("step"+i).classList.toggle("hidden",i!==n);
+  for(let i=1;i<=9;i++)$("step"+i).classList.toggle("hidden",i!==n);
   step=n;
-  $("stepper").innerHTML=Array.from({length:9},(_,i)=>`<span class="${i<Math.min(n,9)?"on":""}"></span>`).join("");
-  if(n===9)drawCriteria();
+  $("stepper").innerHTML=Array.from({length:8},(_,i)=>`<span class="${i<Math.min(n,9)?"on":""}"></span>`).join("");
+  if(n===8)drawCriteria();
   window.scrollTo({top:0,behavior:"smooth"});
 }
 
@@ -85,7 +85,7 @@ document.querySelectorAll(".kind").forEach(x=>x.onclick=()=>{
 });
 document.querySelectorAll(".back").forEach(x=>x.onclick=()=>go(+x.dataset.go));
 $("next1").onclick=()=>go(2);$("next2").onclick=()=>go(3);$("next3").onclick=()=>go(4);$("next4").onclick=()=>go(5);
-$("next5").onclick=()=>go(6);$("next6").onclick=()=>go(7);$("next7").onclick=()=>go(8);$("next8").onclick=()=>go(9);
+$("next5").onclick=()=>go(6);$("next6").onclick=()=>go(7);$("next7").onclick=()=>go(8);
 
 function drawCriteria(){
   const box=$("criteria");box.innerHTML="";
@@ -161,7 +161,7 @@ $("publish").onclick=async()=>{
   const{error}=await sb.from("lesson_observations").insert(p);
   $("publish").textContent="Опубликовать лист";
   if(error){$("submitNotice").innerHTML=`<div class="notice error">${escapeHtml(error.message)}</div>`;$("publish").disabled=false;return}
-  go(10);
+  go(9);
 };
 $("restart").onclick=()=>location.reload();
 
