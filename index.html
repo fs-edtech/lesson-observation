@@ -98,35 +98,35 @@
         <h3 class="section-title">Формат наблюдения</h3>
         <p class="section-sub">Выберите направление наблюдения.</p>
         <div class="cards">
-          <div class="choice kind" data-kind="Lesson Study"><div class="ico">🔎</div><h4>Lesson Study</h4><p>Наблюдение и совместный анализ урока.</p></div>
-          <div class="choice kind" data-kind="Action Research"><div class="ico">🧪</div><h4>Action Research</h4><p>Исследование практики и изменений в обучении.</p></div>
-          <div class="choice kind" data-kind="Педагогический дизайн"><div class="ico">🧩</div><h4>Педагогический дизайн</h4><p>Структура урока, методы и учебный опыт.</p></div>
+          <div class="choice kind" data-kind="Педагогический дизайн">
+            <div class="ico">🧩</div><h4>Педагогический дизайн</h4>
+            <p>Структура урока, методы и учебный опыт.</p>
+          </div>
+          <div class="choice disabled">
+            <span class="badge">СКОРО</span>
+            <div class="ico">🔎</div><h4>Lesson Study</h4>
+            <p>Набор вопросов сейчас готовится.</p>
+          </div>
+          <div class="choice disabled">
+            <span class="badge">СКОРО</span>
+            <div class="ico">🧪</div><h4>Action Research</h4>
+            <p>Набор вопросов сейчас готовится.</p>
+          </div>
         </div>
         <div class="actions"><button class="btn secondary back" data-go="6">← Назад</button><button id="next7" class="btn primary" disabled>Продолжить →</button></div>
       </section>
 
       <section id="step8" class="hidden">
-        <h3 class="section-title">Версия карты</h3>
-        <p class="section-sub">Сейчас работает единая пилотная версия.</p>
-        <div class="cards">
-          <div class="choice selected"><span class="badge">ПИЛОТ</span><div class="ico">✨</div><h4>Единая карта</h4><p>Пилотная версия для всех педагогов.</p></div>
-          <div class="choice disabled"><span class="badge">СКОРО</span><div class="ico">🎓</div><h4>Опытный педагог</h4><p>Расширенная карта для опытных педагогов.</p></div>
-          <div class="choice disabled"><span class="badge">СКОРО</span><div class="ico">🌱</div><h4>Педагог-новичок</h4><p>Поддерживающая карта для начинающих педагогов.</p></div>
-        </div>
-        <div class="actions"><button class="btn secondary back" data-go="7">← Назад</button><button id="next8" class="btn primary">К карте наблюдения →</button></div>
-      </section>
-
-      <section id="step9" class="hidden">
         <h3 class="section-title">Критериальная карта</h3>
         <p class="section-sub">Оцените каждый применимый критерий от 0 до 10. Комментарий к выставленной оценке обязателен.</p>
         <div id="criteria" class="criteria"></div>
         <div class="summary"><div><small>Итоговый балл</small><strong id="total">0 / 90</strong></div><div id="level" class="tag">Не заполнено</div></div>
         <div style="margin-top:16px"><label>Итоговый комментарий / рекомендации</label><textarea id="general" placeholder="Ключевые наблюдения, сильные стороны, точки роста, договорённости..."></textarea></div>
         <div id="submitNotice"></div>
-        <div class="actions"><button class="btn secondary back" data-go="8">← Назад</button><button id="publish" class="btn primary" disabled>Опубликовать лист</button></div>
+        <div class="actions"><button class="btn secondary back" data-go="7">← Назад</button><button id="publish" class="btn primary" disabled>Опубликовать лист</button></div>
       </section>
 
-      <section id="step10" class="hidden">
+      <section id="step9" class="hidden">
         <div class="success"><div class="check">✓</div><h3 class="section-title">Лист опубликован</h3><p class="section-sub">Наблюдение сохранено и доступно администрации.</p><button id="restart" class="btn primary">Заполнить ещё одну карту</button></div>
       </section>
     </div>
