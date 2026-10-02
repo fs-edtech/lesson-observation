@@ -17,21 +17,37 @@ const scoreText=r=>`${Number(r.total_score)||0}/${maxScore(r)}`;
 async function boot(){const{data:{session}}=await sb.auth.getSession();if(session)showDashboard(session.user)}boot();
 $("loginBtn").onclick=async()=>{const{data,error}=await sb.auth.signInWithPassword({email:$("email").value.trim(),password:$("password").value});if(error){$("loginNotice").innerHTML=`<div class="notice error">${esc(error.message)}</div>`;return}showDashboard(data.user)};
 $("logoutBtn").onclick=async()=>{await sb.auth.signOut();location.reload()};
-async function showDashboard(user){$("loginBox").classList.add("hidden");$("dashboard").classList.remove("hidden");$("welcome").textContent=user.email||"Все опубликованные листы";const{data,error}=await sb.from("lesson_observations").select("*").order("created_at",{ascending:false});if(error){alert("Не удалось загрузить наблюдения: "+error.message);return}allRows=data||[];renderObservationPage();renderAnalytics();renderTeachers()}
+async function showDashboard(user){$("loginBox").classList.add("hidden");$("dashboard").classList.remove("hidden");$("welcome").textContent=user.email||"Все опубликованные листы";const{data,error}=await sb.from("lesson_observations").select("*").order("created_at",{ascending:false});if(error){alert("Не удалось загрузить наблюдения: "+error.message);return}allRows=data||[];
+  const subjects=[...new Set(allRows.map(r=>r.subject).filter(Boolean))].sort((a,b)=>a.localeCompare(b,"ru"));
+  if($("fSubject")) $("fSubject").innerHTML='<option value="">Все предметы</option>'+subjects.map(x=>`<option value="${esc(x)}">${esc(x)}</option>`).join("");
+  renderObservationPage();renderAnalytics();renderTeachers()}
 
 document.querySelectorAll("[data-view]").forEach(btn=>btn.onclick=()=>{document.querySelectorAll("[data-view]").forEach(x=>x.classList.toggle("active",x===btn));const v=btn.dataset.view;["observations","analytics","teachers"].forEach(x=>$("view-"+x).classList.toggle("hidden",x!==v));$("pageTitle").textContent=v==="observations"?"Журнал наблюдений":v==="analytics"?"Аналитика":"Педагоги";if(v==="teachers"){$("teachersListView").classList.remove("hidden");$("teacherProfileView").classList.add("hidden");renderTeachers()}});
 
-["fObserver","fTeacher","fKind","fDate","fWeek"].forEach(id=>$(id).addEventListener(["fKind","fDate","fWeek"].includes(id)?"change":"input",renderObservationPage));
+["fObserver","fTeacher","fSubject","fGrade","fKind","fDate","fWeek"].forEach(id=>$(id).addEventListener(["fSubject","fGrade","fKind","fDate","fWeek"].includes(id)?"change":"input",renderObservationPage));
 
-function filteredRows(){const fo=$("fObserver").value.toLowerCase().trim(),ft=$("fTeacher").value.toLowerCase().trim(),fk=$("fKind").value,fd=$("fDate").value,fw=$("fWeek").value,ws=monday(new Date());return allRows.filter(r=>{const dt=new Date(r.created_at);return(!fo||full(r,"observer").toLowerCase().includes(fo))&&(!ft||full(r,"teacher").toLowerCase().includes(ft))&&(!fk||r.observation_type===fk)&&(!fd||r.created_at.slice(0,10)===fd)&&(!fw||dt>=ws)})}
-
+function filteredRows(){
+  const fo=$("fObserver").value.toLowerCase().trim(),ft=$("fTeacher").value.toLowerCase().trim(),
+        fs=$("fSubject")?.value||"",fg=$("fGrade")?.value||"",fk=$("fKind").value,fd=$("fDate").value,
+        fw=$("fWeek").value,ws=monday(new Date());
+  return allRows.filter(r=>{
+    const dt=new Date(r.created_at);
+    return(!fo||full(r,"observer").toLowerCase().includes(fo))
+      &&(!ft||full(r,"teacher").toLowerCase().includes(ft))
+      &&(!fs||r.subject===fs)
+      &&(!fg||String(r.class_grade)===fg)
+      &&(!fk||r.observation_type===fk)
+      &&(!fd||r.created_at.slice(0,10)===fd)
+      &&(!fw||dt>=ws);
+  });
+}
 function renderCampusJournal(campus,prefix,bodyId){
   const rows=filteredRows().filter(r=>r.campus===campus),ws=monday(new Date());
   $(prefix+"Total").textContent=rows.length;
   $(prefix+"Week").textContent=rows.filter(r=>new Date(r.created_at)>=ws).length;
   $(prefix+"Teachers").textContent=new Set(rows.map(tkey)).size;
   $(prefix+"Avg").textContent=rows.length?(rows.reduce((a,r)=>a+pct(r),0)/rows.length).toFixed(1)+"%":"—";
-  $(bodyId).innerHTML=rows.length?rows.map(r=>`<tr><td>${esc(fmt(r.created_at))}</td><td>${esc(r.room||"—")}</td><td>${esc(full(r,"observer"))}</td><td>${esc(full(r,"teacher"))}</td><td><span class="tag">${esc(r.observation_type)}</span></td><td><b>${scoreText(r)}</b></td><td><button class="linkbtn" data-open="${r.id}">Открыть лист</button></td><td><button class="trash-btn" data-delete="${r.id}" title="Удалить лист">🗑️</button></td></tr>`).join(""):'<tr><td colspan="8" style="text-align:center;color:#7b8598;padding:28px">Записей пока нет.</td></tr>';
+  $(bodyId).innerHTML=rows.length?rows.map(r=>`<tr><td>${esc(fmt(r.created_at))}</td><td>${esc(r.room||"—")}</td><td>${esc(r.subject||"—")}</td><td>${r.class_grade===null||r.class_grade===undefined?"—":esc(String(r.class_grade)+(r.class_letter||""))}</td><td>${esc(full(r,"observer"))}</td><td>${esc(full(r,"teacher"))}</td><td><span class="tag">${esc(r.observation_type)}</span></td><td><b>${scoreText(r)}</b></td><td><button class="linkbtn" data-open="${r.id}">Открыть лист</button></td><td><button class="trash-btn" data-delete="${r.id}" title="Удалить лист">🗑️</button></td></tr>`).join(""):'<tr><td colspan="10" style="text-align:center;color:#7b8598;padding:28px">Записей пока нет.</td></tr>';
 }
 function renderObservationPage(){renderCampusJournal("Astana Future School","afs","afsRows");renderCampusJournal("Sport School","sport","sportRows");bindRowActions()}
 function bindRowActions(){document.querySelectorAll("[data-open]").forEach(b=>b.onclick=()=>openRecord(b.dataset.open));document.querySelectorAll("[data-delete]").forEach(b=>b.onclick=()=>deleteSheet(b.dataset.delete))}
@@ -91,7 +107,7 @@ function openTeacher(key){
   $("profileSpark").innerHTML=chrono.map(r=>`<i title="${fmtDate(r.created_at)} — ${scoreText(r)} (${pct(r).toFixed(1)}%)" style="height:${Math.max(8,pct(r))}px"></i>`).join("");
   const a=averages(t.rows);
   $("profileCriteria").innerHTML=C.map((c,i)=>`<div class="bar-row" style="grid-template-columns:1fr 1.2fr 50px"><div>${esc(c)}</div><div class="bar-track"><div class="bar-fill" style="width:${a[i]===null?0:a[i]*10}%"></div></div><div class="bar-value">${a[i]===null?"Н/П":a[i].toFixed(1)}</div></div>`).join("");
-  $("profileRows").innerHTML=t.rows.map(r=>`<tr><td>${esc(fmt(r.created_at))}</td><td>${esc(r.campus||"—")}</td><td>${esc(r.room||"—")}</td><td>${esc(full(r,"observer"))}</td><td>${esc(r.observation_type)}</td><td><b>${scoreText(r)}</b></td><td><button class="linkbtn" data-open="${r.id}">Открыть лист</button></td></tr>`).join("");
+  $("profileRows").innerHTML=t.rows.map(r=>`<tr><td>${esc(fmt(r.created_at))}</td><td>${esc(r.campus||"—")}</td><td>${esc(r.room||"—")}</td><td>${esc(r.subject||"—")}</td><td>${r.class_grade===null||r.class_grade===undefined?"—":esc(String(r.class_grade)+(r.class_letter||""))}</td><td>${esc(full(r,"observer"))}</td><td>${esc(r.observation_type)}</td><td><b>${scoreText(r)}</b></td><td><button class="linkbtn" data-open="${r.id}">Открыть лист</button></td></tr>`).join("");
   bindRowActions();
 }
 $("backTeachers").onclick=()=>{$("teacherProfileView").classList.add("hidden");$("teachersListView").classList.remove("hidden")};
@@ -99,7 +115,7 @@ $("backTeachers").onclick=()=>{$("teacherProfileView").classList.add("hidden");$
 function openRecord(id){
   currentRecord=allRows.find(r=>String(r.id)===String(id));if(!currentRecord)return;const r=currentRecord;
   $("modalSubtitle").textContent=`${fmt(r.created_at)} • ${r.observation_type}`;
-  $("modalBody").innerHTML=`<div class="modal-meta"><div class="meta"><small>Кто приходил</small><b>${esc(full(r,"observer"))}</b></div><div class="meta"><small>К кому пришли</small><b>${esc(full(r,"teacher"))}</b></div><div class="meta"><small>Кампус</small><b>${esc(r.campus||"—")}</b></div><div class="meta"><small>Кабинет</small><b>${esc(r.room||"—")}</b></div><div class="meta"><small>Дата и время</small><b>${esc(fmt(r.created_at))}</b></div><div class="meta"><small>Формат</small><b>${esc(r.observation_type)}</b></div></div><div class="table-wrap"><table style="min-width:0"><thead><tr><th>№</th><th>Критерий</th><th>Балл</th><th>Комментарий</th></tr></thead><tbody>${C.map((c,i)=>{const nap=r[`criterion_${i+1}_na`]===true;return`<tr><td>${i+1}</td><td>${esc(c)}</td><td><b>${nap?"Не предусмотрено":(r[`criterion_${i+1}_score`]??"—")}</b></td><td>${esc(r[`criterion_${i+1}_note`]||"Комментарий не оставлен")}</td></tr>`}).join("")}</tbody></table></div><div class="summary"><div><small>Итог</small><strong>${scoreText(r)}</strong></div><span class="tag">${levelPct(pct(r))} уровень · ${pct(r).toFixed(1)}%</span></div><div style="margin-top:16px"><label>Итоговый комментарий / рекомендации</label><div class="meta">${esc(r.general_comment||"Комментарий не оставлен")}</div></div>`;
+  $("modalBody").innerHTML=`<div class="modal-meta"><div class="meta"><small>Кто приходил</small><b>${esc(full(r,"observer"))}</b></div><div class="meta"><small>К кому пришли</small><b>${esc(full(r,"teacher"))}</b></div><div class="meta"><small>Кампус</small><b>${esc(r.campus||"—")}</b></div><div class="meta"><small>Кабинет</small><b>${esc(r.room||"—")}</b></div><div class="meta"><small>Предмет</small><b>${esc(r.subject||"—")}</b></div><div class="meta"><small>Класс</small><b>${r.class_grade===null||r.class_grade===undefined?"—":esc(String(r.class_grade)+(r.class_letter||""))}</b></div><div class="meta"><small>Дата и время</small><b>${esc(fmt(r.created_at))}</b></div><div class="meta"><small>Формат</small><b>${esc(r.observation_type)}</b></div></div><div class="table-wrap"><table style="min-width:0"><thead><tr><th>№</th><th>Критерий</th><th>Балл</th><th>Комментарий</th></tr></thead><tbody>${C.map((c,i)=>{const nap=r[`criterion_${i+1}_na`]===true;return`<tr><td>${i+1}</td><td>${esc(c)}</td><td><b>${nap?"Не предусмотрено":(r[`criterion_${i+1}_score`]??"—")}</b></td><td>${esc(r[`criterion_${i+1}_note`]||"Комментарий не оставлен")}</td></tr>`}).join("")}</tbody></table></div><div class="summary"><div><small>Итог</small><strong>${scoreText(r)}</strong></div><span class="tag">${levelPct(pct(r))} уровень · ${pct(r).toFixed(1)}%</span></div><div style="margin-top:16px"><label>Итоговый комментарий / рекомендации</label><div class="meta">${esc(r.general_comment||"Комментарий не оставлен")}</div></div>`;
   $("modalBackdrop").classList.remove("hidden");
 }
 $("closeModal").onclick=()=>$("modalBackdrop").classList.add("hidden");$("modalBackdrop").onclick=e=>{if(e.target===$("modalBackdrop"))$("modalBackdrop").classList.add("hidden")};
@@ -112,7 +128,7 @@ $("downloadDocx").onclick=async()=>{
   const row=a=>`<w:tr>${a.join("")}</w:tr>`;
   const trs=C.map((c,i)=>{const nap=r[`criterion_${i+1}_na`]===true;return row([cell(String(i+1)),cell(c),cell(nap?"Не предусмотрено":String(r[`criterion_${i+1}_score`]??"—"),true),cell(r[`criterion_${i+1}_note`]||"Комментарий не оставлен")])}).join("");
   const table=`<w:tbl><w:tblPr><w:tblBorders><w:top w:val="single" w:sz="6" w:color="B8C0CC"/><w:left w:val="single" w:sz="6" w:color="B8C0CC"/><w:bottom w:val="single" w:sz="6" w:color="B8C0CC"/><w:right w:val="single" w:sz="6" w:color="B8C0CC"/><w:insideH w:val="single" w:sz="4" w:color="D9DEE7"/><w:insideV w:val="single" w:sz="4" w:color="D9DEE7"/></w:tblBorders></w:tblPr>${row([cell("№",true),cell("Критерий",true),cell("Балл",true),cell("Комментарий",true)])}${trs}</w:tbl>`;
-  const body=[p("Future School",true),p("Лист наблюдения урока",true),p("Дата и время: "+fmt(r.created_at)),p("Кампус: "+(r.campus||"—")),p("Кабинет: "+(r.room||"—")),p("Формат: "+r.observation_type),p("Наблюдатель: "+full(r,"observer")),p("Наблюдаемый педагог: "+full(r,"teacher")),p(""),table,p(""),p(`Итог: ${scoreText(r)} — ${pct(r).toFixed(1)}%`,true),p("Итоговый комментарий / рекомендации: "+(r.general_comment||"Комментарий не оставлен")),`<w:sectPr><w:pgSz w:w="11906" w:h="16838"/><w:pgMar w:top="1134" w:right="1134" w:bottom="1134" w:left="1134"/></w:sectPr>`].join("");
+  const body=[p("Future School",true),p("Лист наблюдения урока",true),p("Дата и время: "+fmt(r.created_at)),p("Кампус: "+(r.campus||"—")),p("Кабинет: "+(r.room||"—")),p("Предмет: "+(r.subject||"—")),p("Класс: "+(r.class_grade===null||r.class_grade===undefined?"—":String(r.class_grade)+(r.class_letter||""))),p("Формат: "+r.observation_type),p("Наблюдатель: "+full(r,"observer")),p("Наблюдаемый педагог: "+full(r,"teacher")),p(""),table,p(""),p(`Итог: ${scoreText(r)} — ${pct(r).toFixed(1)}%`,true),p("Итоговый комментарий / рекомендации: "+(r.general_comment||"Комментарий не оставлен")),`<w:sectPr><w:pgSz w:w="11906" w:h="16838"/><w:pgMar w:top="1134" w:right="1134" w:bottom="1134" w:left="1134"/></w:sectPr>`].join("");
   const documentXml=`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:body>${body}</w:body></w:document>`;
   const ct=`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/></Types>`;
   const rels=`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/></Relationships>`;
