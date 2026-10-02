@@ -9,15 +9,15 @@
 <main class="main"><div class="admin-head"><div><h2 id="pageTitle">Журнал наблюдений</h2><small id="welcome">Все опубликованные листы</small></div><button id="logoutBtn" class="btn secondary">Выйти</button></div>
 
 <section id="view-observations">
-<div class="filters"><input id="fObserver" placeholder="Наблюдатель"><input id="fTeacher" placeholder="Наблюдаемый педагог"><select id="fKind"><option value="">Все направления</option><option>Lesson Study</option><option>Action Research</option><option>Педагогический дизайн</option></select><input id="fDate" type="date"><select id="fWeek"><option value="">Все недели</option><option value="current">Текущая неделя</option></select></div>
+<div class="filters filters-v5"><input id="fObserver" placeholder="Наблюдатель"><input id="fTeacher" placeholder="Наблюдаемый педагог"><select id="fSubject"><option value="">Все предметы</option></select><select id="fGrade"><option value="">Все классы</option><option value="0">0 класс</option><option value="1">1 класс</option><option value="2">2 класс</option><option value="3">3 класс</option><option value="4">4 класс</option><option value="5">5 класс</option><option value="6">6 класс</option><option value="7">7 класс</option></select><select id="fKind"><option value="">Все направления</option><option>Lesson Study</option><option>Action Research</option><option>Педагогический дизайн</option></select><input id="fDate" type="date"><select id="fWeek"><option value="">Все недели</option><option value="current">Текущая неделя</option></select></div>
 
 <div class="campus-section"><div class="campus-title"><div class="dot"></div><div><h3>Astana Future School</h3><p>Первый кампус</p></div></div>
 <div class="kpis"><div class="kpi"><small>Всего наблюдений</small><strong id="afsTotal">0</strong></div><div class="kpi"><small>За текущую неделю</small><strong id="afsWeek">0</strong></div><div class="kpi"><small>Педагогов</small><strong id="afsTeachers">0</strong></div><div class="kpi"><small>Средний результат</small><strong id="afsAvg">—</strong></div></div>
-<div class="table-wrap"><table><thead><tr><th>Дата / время</th><th>Кабинет</th><th>Наблюдатель</th><th>Педагог</th><th>Формат</th><th>Баллы</th><th>Лист</th><th></th></tr></thead><tbody id="afsRows"></tbody></table></div></div>
+<div class="table-wrap"><table><thead><tr><th>Дата / время</th><th>Кабинет</th><th>Предмет</th><th>Класс</th><th>Наблюдатель</th><th>Педагог</th><th>Формат</th><th>Баллы</th><th>Лист</th><th></th></tr></thead><tbody id="afsRows"></tbody></table></div></div>
 
 <div class="campus-section"><div class="campus-title"><div class="dot" style="background:#44b4ff"></div><div><h3>Sport School</h3><p>Второй кампус</p></div></div>
 <div class="kpis"><div class="kpi"><small>Всего наблюдений</small><strong id="sportTotal">0</strong></div><div class="kpi"><small>За текущую неделю</small><strong id="sportWeek">0</strong></div><div class="kpi"><small>Педагогов</small><strong id="sportTeachers">0</strong></div><div class="kpi"><small>Средний результат</small><strong id="sportAvg">—</strong></div></div>
-<div class="table-wrap"><table><thead><tr><th>Дата / время</th><th>Кабинет</th><th>Наблюдатель</th><th>Педагог</th><th>Формат</th><th>Баллы</th><th>Лист</th><th></th></tr></thead><tbody id="sportRows"></tbody></table></div></div>
+<div class="table-wrap"><table><thead><tr><th>Дата / время</th><th>Кабинет</th><th>Предмет</th><th>Класс</th><th>Наблюдатель</th><th>Педагог</th><th>Формат</th><th>Баллы</th><th>Лист</th><th></th></tr></thead><tbody id="sportRows"></tbody></table></div></div>
 </section>
 
 <section id="view-analytics" class="hidden">
@@ -34,7 +34,7 @@
 <div id="teacherProfileView" class="hidden"><div class="profile-top"><div class="profile-name"><button id="backTeachers" class="textlink">← К списку педагогов</button><h3 id="profileName"></h3><p id="profileSub"></p></div></div>
 <div class="kpis"><div class="kpi"><small>Наблюдений</small><strong id="pCount">0</strong></div><div class="kpi"><small>Средний результат</small><strong id="pAvg">—</strong></div><div class="kpi"><small>Последнее наблюдение</small><strong id="pLast" style="font-size:18px">—</strong></div><div class="kpi"><small>Лучший результат</small><strong id="pBest">—</strong></div></div>
 <div class="analytics-grid"><div class="chart-box"><h3>Динамика результатов</h3><div id="profileSpark" class="spark"></div></div><div class="chart-box"><h3>Средние значения по критериям</h3><div id="profileCriteria" class="bar-list"></div></div></div>
-<div class="section-card"><h3>История наблюдений</h3><div class="table-wrap"><table><thead><tr><th>Дата / время</th><th>Кампус</th><th>Кабинет</th><th>Наблюдатель</th><th>Формат</th><th>Баллы</th><th>Лист</th></tr></thead><tbody id="profileRows"></tbody></table></div></div>
+<div class="section-card"><h3>История наблюдений</h3><div class="table-wrap"><table><thead><tr><th>Дата / время</th><th>Кампус</th><th>Кабинет</th><th>Предмет</th><th>Класс</th><th>Наблюдатель</th><th>Формат</th><th>Баллы</th><th>Лист</th></tr></thead><tbody id="profileRows"></tbody></table></div></div>
 </div></section>
 </main></div></section></div>
 
