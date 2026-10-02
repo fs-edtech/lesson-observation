@@ -1,38 +1,149 @@
 <!doctype html>
-<html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Future School — Цифровая карта наблюдения урока</title><link rel="stylesheet" href="css/style.css"></head>
-<body><div class="shell">
-<div class="header"><div class="brand"><img class="brand-logo-round" src="assets/future-school-round.jpg" alt="Future School"><div><h1>Future School</h1><p>Цифровая карта наблюдения урока</p></div></div><a class="btn ghost" href="admin.html">Форма администрации</a></div>
-<section class="panel observer"><div class="hero"><div class="hero-logo-crop"><img src="assets/future-school-symbol-source.jpg" alt="Future School"></div><h2>Цифровая карта наблюдения урока</h2><p>Дата и время сохраняются автоматически.</p></div>
-<div class="content"><div id="stepper" class="stepper"></div>
-<section id="step1"><h3 class="section-title">Данные наблюдателя</h3><p class="section-sub">Укажите фамилию, имя и отчество при наличии.</p><div class="grid2"><div><label>Фамилия <span class="req">*</span></label><input id="oLast"></div><div><label>Имя <span class="req">*</span></label><input id="oFirst"></div></div><div style="margin-top:14px"><label>Отчество <span style="font-weight:500;color:#8a94a8">(при наличии)</span></label><input id="oMiddle" placeholder="При наличии"></div><div class="actions"><span></span><button id="next1" class="btn primary" disabled>Продолжить →</button></div></section>
-<section id="step2" class="hidden"><h3 class="section-title">Выберите кампус</h3><p class="section-sub">Укажите кампус, в котором проходит наблюдение.</p><div class="campus-grid"><div class="campus-card" data-campus="Astana Future School"><div class="ico">🏫</div><h4>Astana Future School</h4><p>Первый кампус</p></div><div class="campus-card" data-campus="Sport School"><div class="ico">🏆</div><h4>Sport School</h4><p>Второй кампус</p></div></div><div class="actions"><button class="btn secondary back" data-go="1">← Назад</button><button id="next2" class="btn primary" disabled>Продолжить →</button></div></section>
-<section id="step3" class="hidden"><h3 class="section-title">Номер кабинета</h3><p class="section-sub">Введите номер кабинета — только цифры, максимум 3 символа.</p><div style="max-width:360px"><label>№ кабинета <span class="req">*</span></label><input id="roomInput" inputmode="numeric" maxlength="3" placeholder="205"></div><div class="actions"><button class="btn secondary back" data-go="2">← Назад</button><button id="next3" class="btn primary" disabled>Продолжить →</button></div></section>
-<section id="step4" class="hidden"><h3 class="section-title">Наблюдаемый педагог</h3><p class="section-sub">Укажите педагога, чей урок вы посещаете.</p><div class="grid2"><div><label>Фамилия <span class="req">*</span></label><input id="tLast"></div><div><label>Имя <span class="req">*</span></label><input id="tFirst"></div></div><div style="margin-top:14px"><label>Отчество <span style="font-weight:500;color:#8a94a8">(при наличии)</span></label><input id="tMiddle" placeholder="При наличии"></div><div class="actions"><button class="btn secondary back" data-go="3">← Назад</button><button id="next4" class="btn primary" disabled>Продолжить →</button></div></section>
-<section id="step5" class="hidden"><h3 class="section-title">Формат наблюдения</h3><p class="section-sub">Выберите направление наблюдения.</p><div class="cards"><div class="choice kind" data-kind="Lesson Study"><div class="ico">🔎</div><h4>Lesson Study</h4><p>Наблюдение и совместный анализ урока.</p></div><div class="choice kind" data-kind="Action Research"><div class="ico">🧪</div><h4>Action Research</h4><p>Исследование практики и изменений в обучении.</p></div><div class="choice kind" data-kind="Педагогический дизайн"><div class="ico">🧩</div><h4>Педагогический дизайн</h4><p>Структура урока, методы и учебный опыт.</p></div></div><div class="actions"><button class="btn secondary back" data-go="4">← Назад</button><button id="next5" class="btn primary" disabled>Продолжить →</button></div></section>
-<section id="step6" class="hidden"><h3 class="section-title">Версия карты</h3><p class="section-sub">Сейчас работает единая пилотная версия. Остальные уже видны как будущие направления.</p><div class="cards"><div class="choice selected"><span class="badge">ПИЛОТ</span><div class="ico">✨</div><h4>Единая карта</h4><p>Пилотная версия для всех педагогов.</p></div><div class="choice disabled"><span class="badge">СКОРО</span><div class="ico">🎓</div><h4>Опытный педагог</h4><p>Расширенная карта для опытных педагогов.</p></div><div class="choice disabled"><span class="badge">СКОРО</span><div class="ico">🌱</div><h4>Педагог-новичок</h4><p>Поддерживающая карта для начинающих педагогов.</p></div></div><div class="actions"><button class="btn secondary back" data-go="5">← Назад</button><button id="next6" class="btn primary">К карте наблюдения →</button></div></section>
-<section id="step7" class="hidden"><h3 class="section-title">Критериальная карта</h3><p class="section-sub">Оцените каждый критерий от 0 до 10 и добавьте комментарий при необходимости.</p><div id="criteria" class="criteria"></div><div class="summary"><div><small>Итоговый балл</small><strong id="total">0 / 90</strong></div><div id="level" class="tag">Не заполнено</div></div><div style="margin-top:16px"><label>Итоговый комментарий / рекомендации</label><textarea id="general" placeholder="Ключевые наблюдения, сильные стороны, точки роста, договорённости..."></textarea></div><div id="submitNotice"></div><div class="actions"><button class="btn secondary back" data-go="6">← Назад</button><button id="publish" class="btn primary" disabled>Опубликовать лист</button></div></section>
-<section id="step8" class="hidden"><div class="success"><div class="check">✓</div><h3 class="section-title">Лист опубликован</h3><p class="section-sub">Наблюдение сохранено и доступно администрации.</p><button id="restart" class="btn primary">Заполнить ещё одну карту</button></div></section>
-</div></section></div>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>Future School — Цифровая карта наблюдения урока</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="shell">
+  <div class="header">
+    <div class="brand">
+      <img class="brand-logo-round" src="assets/future-school-round.jpg" alt="Future School">
+      <div><h1>Future School</h1><p>Цифровая карта наблюдения урока</p></div>
+    </div>
+    <a class="btn ghost" href="admin.html">Форма администрации</a>
+  </div>
+
+  <section class="panel observer">
+    <div class="hero">
+      <div class="hero-logo-crop"><img src="assets/future-school-symbol-source.jpg" alt="Future School"></div>
+      <h2>Цифровая карта наблюдения урока</h2>
+      <p>Дата и время сохраняются автоматически.</p>
+    </div>
+    <div class="content">
+      <div id="stepper" class="stepper"></div>
+
+      <section id="step1">
+        <h3 class="section-title">Данные наблюдателя</h3>
+        <p class="section-sub">Укажите фамилию, имя и отчество при наличии.</p>
+        <div class="grid2">
+          <div><label>Фамилия <span class="req">*</span></label><input id="oLast"></div>
+          <div><label>Имя <span class="req">*</span></label><input id="oFirst"></div>
+        </div>
+        <div style="margin-top:14px">
+          <label>Отчество <span style="font-weight:500;color:#8a94a8">(при наличии)</span></label>
+          <input id="oMiddle" placeholder="При наличии">
+        </div>
+        <div class="actions"><span></span><button id="next1" class="btn primary" disabled>Продолжить →</button></div>
+      </section>
+
+      <section id="step2" class="hidden">
+        <h3 class="section-title">Выберите кампус</h3>
+        <p class="section-sub">Укажите кампус, в котором проходит наблюдение.</p>
+        <div class="campus-grid">
+          <div class="campus-card" data-campus="Astana Future School"><div class="ico">🏫</div><h4>Astana Future School</h4><p>Первый кампус</p></div>
+          <div class="campus-card" data-campus="Sport School"><div class="ico">🏆</div><h4>Sport School</h4><p>Второй кампус</p></div>
+        </div>
+        <div class="actions"><button class="btn secondary back" data-go="1">← Назад</button><button id="next2" class="btn primary" disabled>Продолжить →</button></div>
+      </section>
+
+      <section id="step3" class="hidden">
+        <h3 class="section-title">Номер кабинета</h3>
+        <p class="section-sub">Введите номер кабинета — только цифры, максимум 3 символа.</p>
+        <div style="max-width:360px"><label>№ кабинета <span class="req">*</span></label><input id="roomInput" inputmode="numeric" maxlength="3" placeholder="205"></div>
+        <div class="actions"><button class="btn secondary back" data-go="2">← Назад</button><button id="next3" class="btn primary" disabled>Продолжить →</button></div>
+      </section>
+
+      <section id="step4" class="hidden">
+        <h3 class="section-title">Предмет</h3>
+        <p class="section-sub">Выберите предмет, на урок которого вы пришли.</p>
+        <label>Предмет <span class="req">*</span></label>
+        <select id="subjectSelect"><option value="">Выберите предмет</option></select>
+        <div id="directoryNotice" class="select-note"></div>
+        <div class="actions"><button class="btn secondary back" data-go="3">← Назад</button><button id="next4" class="btn primary" disabled>Продолжить →</button></div>
+      </section>
+
+      <section id="step5" class="hidden">
+        <h3 class="section-title">Наблюдаемый педагог</h3>
+        <p class="section-sub">Список сформирован по выбранному предмету.</p>
+        <label>Педагог <span class="req">*</span></label>
+        <select id="teacherSelect"><option value="">Выберите педагога</option></select>
+        <div class="actions"><button class="btn secondary back" data-go="4">← Назад</button><button id="next5" class="btn primary" disabled>Продолжить →</button></div>
+      </section>
+
+      <section id="step6" class="hidden">
+        <h3 class="section-title">Класс</h3>
+        <p class="section-sub">Выберите параллель и укажите одну литеру класса.</p>
+        <div class="grid2">
+          <div>
+            <label>Класс <span class="req">*</span></label>
+            <select id="classGrade">
+              <option value="">Выберите класс</option>
+              <option value="0">0 класс</option><option value="1">1 класс</option><option value="2">2 класс</option>
+              <option value="3">3 класс</option><option value="4">4 класс</option><option value="5">5 класс</option>
+              <option value="6">6 класс</option><option value="7">7 класс</option>
+            </select>
+          </div>
+          <div>
+            <label>Литера <span class="req">*</span></label>
+            <input id="classLetter" maxlength="1" placeholder="A">
+          </div>
+        </div>
+        <div class="actions"><button class="btn secondary back" data-go="5">← Назад</button><button id="next6" class="btn primary" disabled>Продолжить →</button></div>
+      </section>
+
+      <section id="step7" class="hidden">
+        <h3 class="section-title">Формат наблюдения</h3>
+        <p class="section-sub">Выберите направление наблюдения.</p>
+        <div class="cards">
+          <div class="choice kind" data-kind="Lesson Study"><div class="ico">🔎</div><h4>Lesson Study</h4><p>Наблюдение и совместный анализ урока.</p></div>
+          <div class="choice kind" data-kind="Action Research"><div class="ico">🧪</div><h4>Action Research</h4><p>Исследование практики и изменений в обучении.</p></div>
+          <div class="choice kind" data-kind="Педагогический дизайн"><div class="ico">🧩</div><h4>Педагогический дизайн</h4><p>Структура урока, методы и учебный опыт.</p></div>
+        </div>
+        <div class="actions"><button class="btn secondary back" data-go="6">← Назад</button><button id="next7" class="btn primary" disabled>Продолжить →</button></div>
+      </section>
+
+      <section id="step8" class="hidden">
+        <h3 class="section-title">Версия карты</h3>
+        <p class="section-sub">Сейчас работает единая пилотная версия.</p>
+        <div class="cards">
+          <div class="choice selected"><span class="badge">ПИЛОТ</span><div class="ico">✨</div><h4>Единая карта</h4><p>Пилотная версия для всех педагогов.</p></div>
+          <div class="choice disabled"><span class="badge">СКОРО</span><div class="ico">🎓</div><h4>Опытный педагог</h4><p>Расширенная карта для опытных педагогов.</p></div>
+          <div class="choice disabled"><span class="badge">СКОРО</span><div class="ico">🌱</div><h4>Педагог-новичок</h4><p>Поддерживающая карта для начинающих педагогов.</p></div>
+        </div>
+        <div class="actions"><button class="btn secondary back" data-go="7">← Назад</button><button id="next8" class="btn primary">К карте наблюдения →</button></div>
+      </section>
+
+      <section id="step9" class="hidden">
+        <h3 class="section-title">Критериальная карта</h3>
+        <p class="section-sub">Оцените каждый применимый критерий от 0 до 10. Комментарий к выставленной оценке обязателен.</p>
+        <div id="criteria" class="criteria"></div>
+        <div class="summary"><div><small>Итоговый балл</small><strong id="total">0 / 90</strong></div><div id="level" class="tag">Не заполнено</div></div>
+        <div style="margin-top:16px"><label>Итоговый комментарий / рекомендации</label><textarea id="general" placeholder="Ключевые наблюдения, сильные стороны, точки роста, договорённости..."></textarea></div>
+        <div id="submitNotice"></div>
+        <div class="actions"><button class="btn secondary back" data-go="8">← Назад</button><button id="publish" class="btn primary" disabled>Опубликовать лист</button></div>
+      </section>
+
+      <section id="step10" class="hidden">
+        <div class="success"><div class="check">✓</div><h3 class="section-title">Лист опубликован</h3><p class="section-sub">Наблюдение сохранено и доступно администрации.</p><button id="restart" class="btn primary">Заполнить ещё одну карту</button></div>
+      </section>
+    </div>
+  </section>
+</div>
 
 <div id="rubricBackdrop" class="modal-backdrop hidden">
   <div class="modal rubric-modal">
-    <div class="modal-head">
-      <div><b>Как поставить балл</b><div id="rubricSubtitle" style="font-size:12px;color:#6c7688;margin-top:3px"></div></div>
-      <button id="closeRubric" class="btn secondary">Закрыть</button>
-    </div>
+    <div class="modal-head"><div><b>Как поставить балл</b><div id="rubricSubtitle" style="font-size:12px;color:#6c7688;margin-top:3px"></div></div><button id="closeRubric" class="btn secondary">Закрыть</button></div>
     <div class="modal-body">
       <div id="rubricGrid" class="rubric-grid"></div>
-      <div class="rubric-rules">
-        <b>Краткая памятка наблюдателя</b>
-        <ul>
-          <li>Смотрите не только на действия учителя, но и на реакцию учеников.</li>
-          <li>Фиксируйте факты, а не эмоции.</li>
-          <li>«Не предусмотрено» используйте, если критерий объективно не входит в структуру данного урока. Он не снижает итоговый результат.</li>
-        </ul>
-      </div>
+      <div class="rubric-rules"><b>Краткая памятка наблюдателя</b><ul><li>Смотрите не только на действия учителя, но и на реакцию учеников.</li><li>Фиксируйте факты, а не эмоции.</li><li>«Не предусмотрено» не считается нулём и не снижает итоговый результат.</li></ul></div>
     </div>
   </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="js/config.js"></script><script src="js/observer.js"></script></body></html>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/config.js"></script>
+<script src="js/observer.js"></script>
+</body></html>
