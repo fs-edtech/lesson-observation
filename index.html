@@ -102,10 +102,9 @@
             <div class="ico">🧩</div><h4>Педагогический дизайн</h4>
             <p>Структура урока, методы и учебный опыт.</p>
           </div>
-          <div class="choice disabled">
-            <span class="badge">СКОРО</span>
+          <div class="choice kind" data-kind="Lesson Study">
             <div class="ico">🔎</div><h4>Lesson Study</h4>
-            <p>Набор вопросов сейчас готовится.</p>
+            <p>Анализ планирования, методической организации, оценивания и исследовательского вопроса.</p>
           </div>
           <div class="choice disabled">
             <span class="badge">СКОРО</span>
@@ -117,11 +116,13 @@
       </section>
 
       <section id="step8" class="hidden">
-        <h3 class="section-title">Критериальная карта</h3>
-        <p class="section-sub">Оцените каждый применимый критерий от 0 до 10. Комментарий к выставленной оценке обязателен.</p>
+        <h3 id="formTitle" class="section-title">Критериальная карта</h3>
+        <p id="formSubtitle" class="section-sub"></p>
+        <div id="formIntro"></div>
         <div id="criteria" class="criteria"></div>
-        <div class="summary"><div><small>Итоговый балл</small><strong id="total">0 / 90</strong></div><div id="level" class="tag">Не заполнено</div></div>
-        <div style="margin-top:16px"><label>Итоговый комментарий / рекомендации</label><textarea id="general" placeholder="Ключевые наблюдения, сильные стороны, точки роста, договорённости..."></textarea></div>
+        <div id="totalSummary" class="summary"><div><small>Итоговый балл</small><strong id="total">0 / 90</strong></div><div id="level" class="tag">Не заполнено</div></div>
+        <div id="generalWrap" style="margin-top:16px"><label>Итоговый комментарий / рекомендации</label><textarea id="general" placeholder="Ключевые наблюдения, сильные стороны, точки роста, договорённости..."></textarea></div>
+        <div id="formOutro"></div>
         <div id="submitNotice"></div>
         <div class="actions"><button class="btn secondary back" data-go="7">← Назад</button><button id="publish" class="btn primary" disabled>Опубликовать лист</button></div>
       </section>
@@ -135,7 +136,7 @@
 
 <div id="rubricBackdrop" class="modal-backdrop hidden">
   <div class="modal rubric-modal">
-    <div class="modal-head"><div><b>Как поставить балл</b><div id="rubricSubtitle" style="font-size:12px;color:#6c7688;margin-top:3px"></div></div><button id="closeRubric" class="btn secondary">Закрыть</button></div>
+    <div class="modal-head"><div><b id="rubricTitle">Как поставить балл</b><div id="rubricSubtitle" style="font-size:12px;color:#6c7688;margin-top:3px"></div></div><button id="closeRubric" class="btn secondary">Закрыть</button></div>
     <div class="modal-body">
       <div id="rubricGrid" class="rubric-grid"></div>
       <div class="rubric-rules"><b>Краткая памятка наблюдателя</b><ul><li>Смотрите не только на действия учителя, но и на реакцию учеников.</li><li>Фиксируйте факты, а не эмоции.</li><li>«Не предусмотрено» не считается нулём и не снижает итоговый результат.</li></ul></div>
