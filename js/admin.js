@@ -129,16 +129,31 @@ function openRecord(id){
   const common=`<div class="modal-meta"><div class="meta"><small>Кто приходил</small><b>${esc(full(r,"observer"))}</b></div><div class="meta"><small>К кому пришли</small><b>${esc(full(r,"teacher"))}</b></div><div class="meta"><small>Кампус</small><b>${esc(r.campus||"—")}</b></div><div class="meta"><small>Кабинет</small><b>${esc(r.room||"—")}</b></div><div class="meta"><small>Предмет</small><b>${esc(r.subject||"—")}</b></div><div class="meta"><small>Класс</small><b>${esc(classText(r))}</b></div><div class="meta"><small>Дата и время</small><b>${esc(fmt(r.created_at))}</b></div><div class="meta"><small>Формат</small><b>${esc(r.observation_type)}</b></div></div>`;
   if(r.observation_type==="Lesson Study" && r.form_payload){
     const fp=typeof r.form_payload==="string"?JSON.parse(r.form_payload):r.form_payload;
-    const criteria=fp.criteria||[];
-    let lastSection="";
-    const critHtml=criteria.map((x,i)=>{
-      const section=x.section!==lastSection?`<tr><td colspan="4" style="font-weight:900;background:#f4f6fb">${esc(x.section)}</td></tr>`:"";lastSection=x.section;
-      return `${section}<tr><td>${i+1}</td><td>${esc(x.question)}</td><td><b>${esc(x.value)}</b></td><td>${esc(x.comment||"—")}</td></tr>`;
-    }).join("");
-    const general=(fp.general_analysis||[]).map((x,i)=>`<div class="meta" style="margin-top:8px"><small>${i+1}. ${esc(x.question)}</small><b>${esc(x.answer||"—")}</b></div>`).join("");
-    const final=(fp.final_conclusion||[]).map(x=>`<div class="meta" style="margin-top:8px"><small>${esc(x.question)}</small><b>${esc(x.answer||"—")}</b></div>`).join("");
-    $("modalBody").innerHTML=common+`<div class="modal-meta" style="margin-top:12px"><div class="meta"><small>Тема урока</small><b>${esc(fp.lesson_topic||"—")}</b></div><div class="meta"><small>Цель урока</small><b>${esc(fp.lesson_goal||"—")}</b></div><div class="meta"><small>Исследовательский вопрос Lesson Study</small><b>${esc(fp.research_question||"—")}</b></div></div><div class="table-wrap" style="margin-top:16px"><table style="min-width:0"><thead><tr><th>№</th><th>Критерий</th><th>Оценка</th><th>Комментарий</th></tr></thead><tbody>${critHtml}</tbody></table></div><h4 style="margin:18px 0 8px">VI. Общий анализ урока</h4>${general}<h4 style="margin:18px 0 8px">VII. Итоговое заключение проверяющего</h4>${final}`;
-  }else{
+    if(fp.schema==="lesson-study-focus-v1"){
+      const criteria=fp.criteria||[];
+      const critHtml=criteria.map((x,i)=>`<tr><td>${i+1}</td><td><b>${esc(x.title||"")}</b><div style="color:#6c7688;margin-top:4px">${esc(x.focus||"")}</div></td><td><b>${x.not_applicable?"Не предусмотрено":esc(String(x.score??"—"))}</b></td><td>${esc(x.comment||"—")}</td></tr>`).join("");
+      const final=(fp.final_recommendations||[]).map((x,i)=>`<div class="meta" style="margin-top:8px"><small>${i+1}. ${esc(x.question)}</small><b>${esc(x.answer||"—")}</b></div>`).join("");
+      $("modalBody").innerHTML=common+`<div class="modal-meta" style="margin-top:12px">
+        <div class="meta"><small>Фокусный ученик</small><b>${esc(fp.focus_student_label||fp.focus_student||"—")}</b></div>
+        <div class="meta"><small>Имя / инициалы</small><b>${esc(fp.student_name||"—")}</b></div>
+        <div class="meta"><small>Место в классе</small><b>${esc(fp.student_place||"—")}</b></div>
+        <div class="meta"><small>Группа Lesson Study</small><b>${esc(fp.group_type||"—")}</b></div>
+        <div class="meta"><small>Исследовательский вопрос</small><b>${esc(fp.research_question||"—")}</b></div>
+      </div>
+      <div class="table-wrap" style="margin-top:16px"><table style="min-width:0"><thead><tr><th>№</th><th>Критерий</th><th>Балл</th><th>Комментарий</th></tr></thead><tbody>${critHtml}</tbody></table></div>
+      <div class="summary"><div><small>Итог</small><strong>${Number(r.total_score)||0}/${Number(r.total_possible)||90}</strong></div></div>
+      <h4 style="margin:18px 0 8px">Итоговый комментарий / рекомендации</h4>${final}`;
+    }else{
+      const criteria=fp.criteria||[];
+      let lastSection="";
+      const critHtml=criteria.map((x,i)=>{
+        const section=x.section!==lastSection?`<tr><td colspan="4" style="font-weight:900;background:#f4f6fb">${esc(x.section)}</td></tr>`:"";lastSection=x.section;
+        return `${section}<tr><td>${i+1}</td><td>${esc(x.question)}</td><td><b>${esc(x.value)}</b></td><td>${esc(x.comment||"—")}</td></tr>`;
+      }).join("");
+      const general=(fp.general_analysis||[]).map((x,i)=>`<div class="meta" style="margin-top:8px"><small>${i+1}. ${esc(x.question)}</small><b>${esc(x.answer||"—")}</b></div>`).join("");
+      const final=(fp.final_conclusion||[]).map(x=>`<div class="meta" style="margin-top:8px"><small>${esc(x.question)}</small><b>${esc(x.answer||"—")}</b></div>`).join("");
+      $("modalBody").innerHTML=common+`<div class="modal-meta" style="margin-top:12px"><div class="meta"><small>Тема урока</small><b>${esc(fp.lesson_topic||"—")}</b></div><div class="meta"><small>Цель урока</small><b>${esc(fp.lesson_goal||"—")}</b></div><div class="meta"><small>Исследовательский вопрос Lesson Study</small><b>${esc(fp.research_question||"—")}</b></div></div><div class="table-wrap" style="margin-top:16px"><table style="min-width:0"><thead><tr><th>№</th><th>Критерий</th><th>Оценка</th><th>Комментарий</th></tr></thead><tbody>${critHtml}</tbody></table></div><h4 style="margin:18px 0 8px">VI. Общий анализ урока</h4>${general}<h4 style="margin:18px 0 8px">VII. Итоговое заключение проверяющего</h4>${final}`;
+    }  }else{
     $("modalBody").innerHTML=common+`<div class="table-wrap"><table style="min-width:0"><thead><tr><th>№</th><th>Критерий</th><th>Балл</th><th>Комментарий</th></tr></thead><tbody>${C.map((c,i)=>{const nap=r[`criterion_${i+1}_na`]===true;return`<tr><td>${i+1}</td><td>${esc(c)}</td><td><b>${nap?"Не предусмотрено":(r[`criterion_${i+1}_score`]??"—")}</b></td><td>${esc(r[`criterion_${i+1}_note`]||"Комментарий не оставлен")}</td></tr>`}).join("")}</tbody></table></div><div class="summary"><div><small>Итог</small><strong>${scoreText(r)}</strong></div><span class="tag">${levelPct(pct(r))} уровень · ${pct(r).toFixed(1)}%</span></div><div style="margin-top:16px"><label>Итоговый комментарий / рекомендации</label><div class="meta">${esc(r.general_comment||"Комментарий не оставлен")}</div></div>`;
   }
   $("modalBackdrop").classList.remove("hidden");
@@ -154,17 +169,39 @@ $("downloadDocx").onclick=async()=>{
   let body=[p("Future School",true),p(r.observation_type==="Lesson Study"?"Карта анализа урока в рамках Lesson Study":"Лист наблюдения урока",true),p("Дата и время: "+fmt(r.created_at)),p("Кампус: "+(r.campus||"—")),p("Кабинет: "+(r.room||"—")),p("Предмет: "+(r.subject||"—")),p("Класс: "+classText(r)),p("Формат: "+r.observation_type),p("Наблюдатель: "+full(r,"observer")),p("Наблюдаемый педагог: "+full(r,"teacher")),p("")];
   if(r.observation_type==="Lesson Study" && r.form_payload){
     const fp=typeof r.form_payload==="string"?JSON.parse(r.form_payload):r.form_payload;
-    body.push(p("Тема урока: "+(fp.lesson_topic||"—")),p("Цель урока: "+(fp.lesson_goal||"—")),p("Исследовательский вопрос Lesson Study: "+(fp.research_question||"—")),p(""));
-    let last="";
-    for(const x of (fp.criteria||[])){
-      if(x.section!==last){body.push(p(x.section,true));last=x.section}
-      body.push(p(x.question,true),p("Оценка: "+x.value),p("Комментарий: "+(x.comment||"—")),p(""));
-    }
-    body.push(p("VI. Общий анализ урока",true));
-    for(const x of (fp.general_analysis||[])) body.push(p(x.question,true),p(x.answer||"—"));
-    body.push(p("VII. Итоговое заключение проверяющего",true));
-    for(const x of (fp.final_conclusion||[])) body.push(p(x.question,true),p(x.answer||"—"));
-  }else{
+    if(fp.schema==="lesson-study-focus-v1"){
+      body.push(
+        p("Фокусный ученик: "+(fp.focus_student_label||fp.focus_student||"—")),
+        p("Имя / инициалы: "+(fp.student_name||"—")),
+        p("Место в классе: "+(fp.student_place||"—")),
+        p("Группа Lesson Study: "+(fp.group_type||"—")),
+        p("Исследовательский вопрос: "+(fp.research_question||"—")),
+        p("")
+      );
+      for(const x of (fp.criteria||[])){
+        body.push(
+          p(x.title||"",true),
+          p("Фокус наблюдения: "+(x.focus||"")),
+          p("Балл: "+(x.not_applicable?"Не предусмотрено":String(x.score??"—"))),
+          p("Комментарий: "+(x.comment||"—")),
+          p("")
+        );
+      }
+      body.push(p(`Итог: ${Number(r.total_score)||0}/${Number(r.total_possible)||90}`,true));
+      body.push(p("Итоговый комментарий / рекомендации",true));
+      for(const x of (fp.final_recommendations||[])) body.push(p(x.question,true),p(x.answer||"—"));
+    }else{
+      body.push(p("Тема урока: "+(fp.lesson_topic||"—")),p("Цель урока: "+(fp.lesson_goal||"—")),p("Исследовательский вопрос Lesson Study: "+(fp.research_question||"—")),p(""));
+      let last="";
+      for(const x of (fp.criteria||[])){
+        if(x.section!==last){body.push(p(x.section,true));last=x.section}
+        body.push(p(x.question,true),p("Оценка: "+x.value),p("Комментарий: "+(x.comment||"—")),p(""));
+      }
+      body.push(p("VI. Общий анализ урока",true));
+      for(const x of (fp.general_analysis||[])) body.push(p(x.question,true),p(x.answer||"—"));
+      body.push(p("VII. Итоговое заключение проверяющего",true));
+      for(const x of (fp.final_conclusion||[])) body.push(p(x.question,true),p(x.answer||"—"));
+    }  }else{
     const trs=C.map((c,i)=>{const nap=r[`criterion_${i+1}_na`]===true;return row([cell(String(i+1)),cell(c),cell(nap?"Не предусмотрено":String(r[`criterion_${i+1}_score`]??"—"),true),cell(r[`criterion_${i+1}_note`]||"Комментарий не оставлен")])}).join("");
     const table=`<w:tbl><w:tblPr><w:tblBorders><w:top w:val="single" w:sz="6" w:color="B8C0CC"/><w:left w:val="single" w:sz="6" w:color="B8C0CC"/><w:bottom w:val="single" w:sz="6" w:color="B8C0CC"/><w:right w:val="single" w:sz="6" w:color="B8C0CC"/><w:insideH w:val="single" w:sz="4" w:color="D9DEE7"/><w:insideV w:val="single" w:sz="4" w:color="D9DEE7"/></w:tblBorders></w:tblPr>${row([cell("№",true),cell("Критерий",true),cell("Балл",true),cell("Комментарий",true)])}${trs}</w:tbl>`;
     body.push(table,p(""),p(`Итог: ${scoreText(r)} — ${pct(r).toFixed(1)}%`,true),p("Итоговый комментарий / рекомендации: "+(r.general_comment||"Комментарий не оставлен")));
