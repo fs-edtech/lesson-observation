@@ -115,7 +115,34 @@
         <div class="actions"><button class="btn secondary back" data-go="6">← Назад</button><button id="next7" class="btn primary" disabled>Продолжить →</button></div>
       </section>
 
+      
       <section id="step8" class="hidden">
+        <h3 class="section-title">Фокусный ученик Lesson Study</h3>
+        <p class="section-sub">Выберите ученика, за которым вы будете вести наблюдение в рамках Lesson Study.</p>
+        <div class="cards">
+          <div class="choice ls-student" data-ls-student="A">
+            <div class="ico">🅰️</div>
+            <h4>Ученик A</h4>
+            <p>Сильный ученик</p>
+          </div>
+          <div class="choice ls-student" data-ls-student="B">
+            <div class="ico">🅱️</div>
+            <h4>Ученик B</h4>
+            <p>Ученик среднего уровня</p>
+          </div>
+          <div class="choice ls-student" data-ls-student="C">
+            <div class="ico">©️</div>
+            <h4>Ученик C</h4>
+            <p>Испытывает трудности</p>
+          </div>
+        </div>
+        <div class="actions">
+          <button class="btn secondary back" data-go="7">← Назад</button>
+          <button id="next8" class="btn primary" disabled>Продолжить →</button>
+        </div>
+      </section>
+
+<section id="step9" class="hidden">
         <h3 id="formTitle" class="section-title">Критериальная карта</h3>
         <p id="formSubtitle" class="section-sub"></p>
         <div id="formIntro"></div>
@@ -124,10 +151,10 @@
         <div id="generalWrap" style="margin-top:16px"><label>Итоговый комментарий / рекомендации</label><textarea id="general" placeholder="Ключевые наблюдения, сильные стороны, точки роста, договорённости..."></textarea></div>
         <div id="formOutro"></div>
         <div id="submitNotice"></div>
-        <div class="actions"><button class="btn secondary back" data-go="7">← Назад</button><button id="publish" class="btn primary" disabled>Опубликовать лист</button></div>
+        <div class="actions"><button class="btn secondary back" id="backFromForm">← Назад</button><button id="publish" class="btn primary" disabled>Опубликовать лист</button></div>
       </section>
 
-      <section id="step9" class="hidden">
+      <section id="step10" class="hidden">
         <div class="success"><div class="check">✓</div><h3 class="section-title">Лист опубликован</h3><p class="section-sub">Наблюдение сохранено и доступно администрации.</p><button id="restart" class="btn primary">Заполнить ещё одну карту</button></div>
       </section>
     </div>
