@@ -160,3 +160,10 @@ label{display:block;font-size:13px;font-weight:800;margin:0 0 7px}
 .ls-status-card{border:1px solid var(--line);border-radius:14px;padding:14px;background:#fff}
 .ls-status-card b{display:block;margin-bottom:5px}
 @media(max-width:700px){.ls-choice{width:100%;text-align:left}}
+
+/* v6.1 — focus student Lesson Study */
+.ls-focus-banner{margin:0 0 16px;padding:14px 16px;border-radius:16px;background:#f5f7fc;border:1px solid var(--line)}
+.ls-focus-banner b{display:block;font-size:16px;margin-bottom:4px}
+.ls-meta-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:18px}
+.ls-meta-grid .full{grid-column:1/-1}
+@media(max-width:700px){.ls-meta-grid{grid-template-columns:1fr}.ls-meta-grid .full{grid-column:auto}}
